@@ -4,30 +4,28 @@ import com.sam.flickr.data.api.ApiService
 import com.sam.flickr.data.mapper.ImageMapper
 import com.sam.flickr.domain.data.ImageFetchState
 import com.sam.flickr.domain.repository.IImageRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ImageRepository @Inject constructor(
-    private val apiService: ApiService,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val apiService: ApiService
 ) : IImageRepository {
-    override suspend fun getImageFetchStateFlow(queries: String): ImageFetchState {
-        try {
-            val response = apiService.getImages(tags = queries)
-
-            if (response.isSuccessful) {
-                response.body()?.let { body ->
-                    return  ImageFetchState.Success(body.items.map { ImageMapper.mapToDomain(it) })
-                } ?: run {
-                    return ImageFetchState.Error("Error")
+    
+    override suspend fun getImageFetchStateFlow(queries: String): Flow<ImageFetchState> {
+        return flow {
+            try {
+                val response = apiService.getImages(tags = queries)
+                if (response.isSuccessful) {
+                    response.body()?.let { body ->
+                        emit(ImageFetchState.Success(body.items.map { ImageMapper.mapToDomain(it) }))
+                    } ?: emit(ImageFetchState.Error("Empty response body"))
+                } else {
+                    emit(ImageFetchState.Error("API Error: ${response.code()}"))
                 }
-            } else {
-                return ImageFetchState.Error("Error")
+            } catch (e: Exception) {
+                emit(ImageFetchState.Error(e.message ?: "Unknown error occurred"))
             }
-        } catch (e: Exception) {
-           return ImageFetchState.Error(e.toString())
         }
     }
-
 }

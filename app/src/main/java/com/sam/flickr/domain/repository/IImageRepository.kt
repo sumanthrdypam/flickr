@@ -4,5 +4,5 @@ import com.sam.flickr.domain.data.ImageFetchState
 import kotlinx.coroutines.flow.Flow
 
 interface IImageRepository {
-    suspend fun getImageFetchStateFlow(queries:String) : ImageFetchState
+    suspend fun getImageFetchStateFlow(queries: String): Flow<ImageFetchState>
 }

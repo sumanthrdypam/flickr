@@ -29,7 +29,7 @@ fun SearchBar(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    var searchQuery by remember { mutableStateOf("") }
+    val searchQuery by imageViewModel.query.collectAsState()
 
     Box(
         modifier = modifier.padding(
@@ -40,11 +40,9 @@ fun SearchBar(
         SearchTextField(
             query = searchQuery,
             onQueryChange = { newQuery ->
-                searchQuery = newQuery
                 imageViewModel.query(newQuery)
             },
             onClearClick = {
-                searchQuery = ""
                 imageViewModel.query("")
             },
             focusManager = focusManager

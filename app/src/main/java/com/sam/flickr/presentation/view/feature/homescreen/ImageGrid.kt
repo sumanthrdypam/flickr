@@ -47,6 +47,7 @@ fun ImageGrid(
         contentAlignment = Alignment.Center
     ) {
         when(val result = imageResult.value) {
+            is ImageFetchState.Idle -> IdleState()
             is ImageFetchState.Loading -> LoadingState()
             is ImageFetchState.Success -> {
                 if (result.images.isEmpty()) {
@@ -150,5 +151,29 @@ private fun ImagesGrid(
                 onImageClick = { onImageClick(image) }
             )
         }
+    }
+}
+
+@Composable
+private fun IdleState() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Start Searching",
+            style = MaterialTheme.typography.titleMedium,
+            color = Color(0xFF666666)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Enter keywords to find images",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color(0xFF666666),
+            textAlign = TextAlign.Center
+        )
     }
 }
