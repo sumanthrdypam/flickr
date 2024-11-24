@@ -14,7 +14,7 @@ fun AppNavHost(navController: NavHostController, imageViewModel: ImageViewModel)
 
         NavHost(navController=navController, startDestination = Screen.Home.route){
             composable(Screen.Home.route){
-                HomeScreen(navController =navController,imageViewModel)
+                HomeScreen(navController,imageViewModel)
             }
 
             composable(Screen.DetailedScreen.route){

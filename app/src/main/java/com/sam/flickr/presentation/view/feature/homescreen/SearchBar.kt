@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sam.flickr.presentation.viewmodel.ImageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,7 +30,7 @@ fun SearchBar(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    val searchQuery by imageViewModel.query.collectAsState()
+    val searchQuery by imageViewModel.searchQuery.collectAsStateWithLifecycle()
 
     Box(
         modifier = modifier.padding(
@@ -40,10 +41,10 @@ fun SearchBar(
         SearchTextField(
             query = searchQuery,
             onQueryChange = { newQuery ->
-                imageViewModel.query(newQuery)
+                imageViewModel.updateSearchQuery(newQuery)
             },
             onClearClick = {
-                imageViewModel.query("")
+                imageViewModel.updateSearchQuery("")
             },
             focusManager = focusManager
         )

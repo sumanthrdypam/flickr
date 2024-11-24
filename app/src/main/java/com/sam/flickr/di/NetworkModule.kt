@@ -2,8 +2,6 @@ package com.sam.flickr.di
 
 import com.sam.flickr.data.api.ApiService
 import com.sam.flickr.data.api.Constant
-import com.sam.flickr.data.repository.ImageRepository
-import com.sam.flickr.domain.repository.IImageRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,12 +46,6 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit) : ApiService{
         return retrofit.create(ApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRepository(apiService: ApiService) : IImageRepository{
-        return ImageRepository(apiService)
     }
 
 }

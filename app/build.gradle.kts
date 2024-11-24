@@ -98,6 +98,7 @@ dependencies {
 
     //constraintlayout
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     //leakcanary
     debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.14")

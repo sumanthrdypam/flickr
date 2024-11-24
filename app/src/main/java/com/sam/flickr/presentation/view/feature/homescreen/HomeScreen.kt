@@ -23,7 +23,6 @@ fun HomeScreen(
         val (searchBar, imagesGrid) = createRefs()
         val guideLineFromTop = createGuidelineFromTop(0.2f)
 
-        // Search Section
         Box(
             modifier = Modifier
                 .background(Color(Constants.BACKGROUND_COLOR))
@@ -39,7 +38,6 @@ fun HomeScreen(
             SearchBar(imageViewModel)
         }
 
-        // Images Grid Section
         ImageGrid(
             modifier = Modifier.constrainAs(imagesGrid) {
                 top.linkTo(guideLineFromTop)

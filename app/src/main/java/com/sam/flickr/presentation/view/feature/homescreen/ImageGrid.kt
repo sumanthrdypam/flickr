@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sam.flickr.domain.data.Image
 import com.sam.flickr.domain.data.ImageFetchState
@@ -40,8 +41,7 @@ fun ImageGrid(
     navController: NavController,
     imageViewModel: ImageViewModel
 ) {
-    val imageResult = imageViewModel.imageFetchState.collectAsState()
-
+    val imageResult = imageViewModel.uiState.collectAsStateWithLifecycle()
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -50,17 +50,13 @@ fun ImageGrid(
             is ImageFetchState.Idle -> IdleState()
             is ImageFetchState.Loading -> LoadingState()
             is ImageFetchState.Success -> {
-                if (result.images.isEmpty()) {
-                    EmptyState()
-                } else {
                     ImagesGrid(
                         images = result.images,
                         onImageClick = { image ->
-                            imageViewModel.selectImage(image)
+                            imageViewModel.updateSelectedImage(image)
                             navController.navigate("detailedScreen")
                         }
                     )
-                }
             }
             is ImageFetchState.Error -> ErrorState(message = result.message)
         }
@@ -75,28 +71,6 @@ private fun LoadingState() {
     )
 }
 
-@Composable
-private fun EmptyState() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "No images found",
-            style = MaterialTheme.typography.titleMedium,
-            color = Color(0xFF666666)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Try searching for something else",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF666666)
-        )
-    }
-}
 
 @Composable
 private fun ErrorState(message: String) {

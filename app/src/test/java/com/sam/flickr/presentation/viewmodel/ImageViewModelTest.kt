@@ -41,7 +41,7 @@ class ImageViewModelTest {
         viewModel = ImageViewModel(imageFetchStateUseCase)
         
         // Then
-        assertEquals(ImageFetchState.Loading, viewModel.imageFetchState.value)
+        assertEquals(ImageFetchState.Loading, viewModel.uiState.value)
     }
 
     @Test
@@ -54,12 +54,12 @@ class ImageViewModelTest {
 
         // When
         viewModel = ImageViewModel(imageFetchStateUseCase)
-        viewModel.query("test")
+        viewModel.updateSearchQuery("test")
         
         testDispatcher.scheduler.advanceTimeBy(500) // Account for debounce
         
         // Then
-        assertEquals(ImageFetchState.Success(mockImages), viewModel.imageFetchState.value)
+        assertEquals(ImageFetchState.Success(mockImages), viewModel.uiState.value)
     }
 
     @Test
@@ -70,12 +70,12 @@ class ImageViewModelTest {
 
         // When
         viewModel = ImageViewModel(imageFetchStateUseCase)
-        viewModel.query("test")
+        viewModel.updateSearchQuery("test")
         
         testDispatcher.scheduler.advanceTimeBy(500)
         
         // Then
-        assert(viewModel.imageFetchState.value is ImageFetchState.Error)
+        assert(viewModel.uiState.value is ImageFetchState.Error)
     }
 
     @Test
@@ -86,7 +86,7 @@ class ImageViewModelTest {
         
         // When
         viewModel = ImageViewModel(imageFetchStateUseCase)
-        viewModel.selectImage(testImage)
+        viewModel.updateSelectedImage(testImage)
         
         // Then
         assertEquals(testImage, viewModel.selectedImage.value)
