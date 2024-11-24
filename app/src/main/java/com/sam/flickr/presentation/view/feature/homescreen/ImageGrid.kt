@@ -108,7 +108,7 @@ private fun ErrorState(message: String) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Oops! Something went wrong",
+            text = "Oops!",
             style = MaterialTheme.typography.titleMedium,
             color = Color(0xFF666666),
             modifier = Modifier.padding(bottom = 8.dp)

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_generic">Something went wrong. Please try again</string>
+    <string name="error_no_internet">Please check your internet connection and try again</string>
+    <string name="error_no_images_found">No images found for \'%1$s\'</string>
+</resources> 

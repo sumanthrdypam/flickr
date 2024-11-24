@@ -6,6 +6,7 @@ import com.sam.flickr.domain.data.Image
 import com.sam.flickr.domain.data.ImageFetchState
 import com.sam.flickr.domain.usecase.imagefetchusecase.IGetImageFetchStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,50 +15,44 @@ import javax.inject.Inject
 class ImageViewModel @Inject constructor(
     private val imageFetchStateUseCase: IGetImageFetchStateUseCase
 ) : ViewModel() {
-    private val _imageFetchState = MutableStateFlow<ImageFetchState>(ImageFetchState.Loading)
+    private val _imageFetchState = MutableStateFlow<ImageFetchState>(ImageFetchState.Idle)
     val imageFetchState: StateFlow<ImageFetchState> = _imageFetchState.asStateFlow()
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
     private val _selectedImage = MutableStateFlow<Image>(Image("","No Image Selected","","",""))
-    val selectedImage : StateFlow<Image> = _selectedImage
+    val selectedImage: StateFlow<Image> = _selectedImage
     
     init {
-        viewModelScope.launch {
-            fetchImages("car")
-        }
-
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             _query
                 .debounce(300)
                 .distinctUntilChanged()
-                .collect { query ->
-                    if (query.isNotEmpty()) {
-                        fetchImages(query)
-                    }
+                .flowOn(Dispatchers.Default)
+                .flatMapLatest { query ->
+                    imageFetchStateUseCase(query)
+                        .flowOn(Dispatchers.IO)
+                }
+                .catch { error -> 
+                    emit(ImageFetchState.Error(error.message ?: "Unknown error"))
+                }
+                .flowOn(Dispatchers.Default)
+                .collect { state ->
+                    _imageFetchState.value = state
                 }
         }
     }
 
     fun query(newQuery: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             _query.emit(newQuery)
         }
     }
 
-    private suspend fun fetchImages(query: String) {
-        _imageFetchState.emit(ImageFetchState.Loading)
-        try {
-            imageFetchStateUseCase(query).collect { state ->
-                _imageFetchState.emit(state)
-            }
-        } catch (e: Exception) {
-            _imageFetchState.emit(ImageFetchState.Error(e.message ?: "Unknown error"))
-        }
-    }
-
     fun selectImage(image: Image) {
-        _selectedImage.value = image
+        viewModelScope.launch(Dispatchers.Default) {
+            _selectedImage.value = image
+        }
     }
 }
