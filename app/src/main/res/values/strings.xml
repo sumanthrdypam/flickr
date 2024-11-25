@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Flickr</string>
+    
+    <string name="search_hint">Search…</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_icon">Search</string>
+    
+    <string name="idle_title">Start Searching</string>
+    <string name="idle_message">Enter keywords to find images</string>
+    
+    <string name="error_title">Oops!</string>
+    <string name="no_image_selected">No image selected</string>
+    
+    <string name="share">Share</string>
+    <string name="share_title">Share Image</string>
+    <string name="share_message">Check out this image!\n\n</string>
+    <string name="share_title_prefix">Title: %1$s\n</string>
+    <string name="share_author_prefix">By: %1$s\n</string>
+    <string name="share_date_prefix">Taken on: %1$s\n</string>
+    <string name="share_link_prefix">Link: %1$s\n</string>
+    <string name="share_dimensions">Dimensions: %1$d × %2$d pixels\n</string>
+    
+    <string name="label_title">TITLE</string>
+    <string name="label_description">DESCRIPTION</string>
+    <string name="label_author">AUTHOR</string>
+    <string name="label_dimensions">DIMENSIONS</string>
+    <string name="label_published_date">PUBLISHED DATE</string>
+    <string name="dimensions_format">%1$d × %2$d pixels</string>
+</resources>
