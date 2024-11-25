@@ -4,59 +4,40 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.sam.flickr.presentation.viewmodel.ImageViewModel
-import androidx.compose.ui.graphics.Color
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
+import com.sam.flickr.R
+import com.sam.flickr.presentation.theme.TextPrimary
+import com.sam.flickr.presentation.theme.TextSecondary
+import com.sam.flickr.presentation.theme.White
 import com.sam.flickr.presentation.view.util.TextUtils
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.ui.graphics.FilterQuality
-
-
+import com.sam.flickr.presentation.viewmodel.ImageViewModel
 
 @Composable
 fun DetailedScreen(imageViewModel: ImageViewModel) {
-    val selectedImage = imageViewModel.selectedImage.collectAsState()
+    val selectedImage by imageViewModel.selectedImage.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     val scrollState = rememberScrollState()
@@ -65,10 +46,10 @@ fun DetailedScreen(imageViewModel: ImageViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(dimensionResource(R.dimen.spacing_medium))
                 .verticalScroll(scrollState)
         ) {
-            DisposableEffect(selectedImage.value.link) {
+            DisposableEffect(selectedImage.link) {
                 val requestManager = Glide.with(context)
                 val target = object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -82,7 +63,7 @@ fun DetailedScreen(imageViewModel: ImageViewModel) {
 
                 requestManager
                     .asBitmap()
-                    .load(selectedImage.value.link)
+                    .load(selectedImage.link)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .priority(Priority.HIGH)
                     .encodeQuality(95)
@@ -96,19 +77,21 @@ fun DetailedScreen(imageViewModel: ImageViewModel) {
                 }
             }
 
-            if (selectedImage.value.link.isNotEmpty()) {
+            if (selectedImage.link.isNotEmpty()) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        .height(dimensionResource(R.dimen.detail_image_height)),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.detail_corner_radius)),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = dimensionResource(R.dimen.detail_card_elevation)
+                    )
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         bitmap?.let { btm ->
                             Image(
                                 bitmap = btm.asImageBitmap(),
-                                contentDescription = selectedImage.value.title,
+                                contentDescription = selectedImage.title,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop,
                                 filterQuality = FilterQuality.High
@@ -118,77 +101,73 @@ fun DetailedScreen(imageViewModel: ImageViewModel) {
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(48.dp),
-                                color = Color(0xFF666666),
-                                strokeWidth = 4.dp
+                                modifier = Modifier.size(dimensionResource(R.dimen.loading_indicator_size)),
+                                color = TextSecondary,
+                                strokeWidth = dimensionResource(R.dimen.loading_indicator_stroke)
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
 
-                // Add Share Button after the image and before details
+                // Share Button
                 Button(
                     onClick = {
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, selectedImage.value.title)
+                            putExtra(Intent.EXTRA_SUBJECT, selectedImage.title)
                             val shareText = buildString {
-                                append("Check out this image!\n\n")
-                                append("Title: ${selectedImage.value.title}\n")
-                                append("By: ${selectedImage.value.author}\n")
-                                append("Taken on: ${TextUtils.formatDate(selectedImage.value.dataTaken)}\n")
-                                append("Link: ${selectedImage.value.link}\n")
+                                append(context.getString(R.string.share_message))
+                                append(context.getString(R.string.share_title_prefix, selectedImage.title))
+                                append(context.getString(R.string.share_author_prefix, selectedImage.author))
+                                append(context.getString(R.string.share_date_prefix, TextUtils.formatDate(selectedImage.dataTaken)))
+                                append(context.getString(R.string.share_link_prefix, selectedImage.link))
                                 
-                                val (width, height) = TextUtils.parseImageDimensions(selectedImage.value.description)
-                                append("Dimensions: $width × $height pixels\n")
+                                val (width, height) = TextUtils.parseImageDimensions(selectedImage.description)
+                                append(context.getString(R.string.share_dimensions, width, height))
                             }
                             putExtra(Intent.EXTRA_TEXT, shareText)
                         }
-                        context.startActivity(Intent.createChooser(shareIntent, "Share Image"))
+                        context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_title)))
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF666666)
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = TextSecondary)
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_small)),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = "Share",
-                            tint = Color.White
+                            contentDescription = stringResource(R.string.share),
+                            tint = White
                         )
                         Text(
-                            text = "SHARE",
-                            color = Color.White,
+                            text = stringResource(R.string.share),
+                            color = White,
                             fontWeight = FontWeight.Bold
                         )
                     }
                 }
-                
-                Spacer(modifier = Modifier.height(24.dp))
 
                 // Image Details
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacing_medium))
                 ) {
                     // Title section
                     Column {
                         Text(
-                            text = "TITLE",
+                            text = stringResource(R.string.label_title),
                             style = MaterialTheme.typography.labelLarge,
-                            color = Color(0xFF666666),  // Silver/gray color for labels
+                            color = TextSecondary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = selectedImage.value.title,
+                            text = selectedImage.title,
                             style = MaterialTheme.typography.headlineMedium,
-                            color = Color.Black,
+                            color = TextPrimary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -196,72 +175,72 @@ fun DetailedScreen(imageViewModel: ImageViewModel) {
                     // Description section
                     Column {
                         Text(
-                            text = "DESCRIPTION",
+                            text = stringResource(R.string.label_description),
                             style = MaterialTheme.typography.labelLarge,
-                            color = Color(0xFF666666),
+                            color = TextSecondary,
                             fontWeight = FontWeight.Bold
                         )
-                        val parsedText = TextUtils.parseHtmlToAnnotatedString(selectedImage.value.description)
+                        val parsedText = TextUtils.parseHtmlToAnnotatedString(selectedImage.description)
                         Text(
                             text = parsedText,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = Color.Black,
+                            color = TextPrimary,
                             lineHeight = 24.sp
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
 
                     // Author section
                     Column {
                         Text(
-                            text = "AUTHOR",
+                            text = stringResource(R.string.label_author),
                             style = MaterialTheme.typography.labelLarge,
-                            color = Color(0xFF666666),
+                            color = TextSecondary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = selectedImage.value.author,
+                            text = selectedImage.author,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
+                            color = TextPrimary
                         )
                     }
                     
-                    // Add Dimensions section after Author section
+                    // Dimensions section
                     Column {
                         Text(
-                            text = "DIMENSIONS",
+                            text = stringResource(R.string.label_dimensions),
                             style = MaterialTheme.typography.labelLarge,
-                            color = Color(0xFF666666),
+                            color = TextSecondary,
                             fontWeight = FontWeight.Bold
                         )
-                        val (width, height) = TextUtils.parseImageDimensions(selectedImage.value.description)
+                        val (width, height) = TextUtils.parseImageDimensions(selectedImage.description)
                         Text(
-                            text = "$width × $height pixels",
+                            text = stringResource(R.string.dimensions_format, width, height),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
+                            color = TextPrimary
                         )
                     }
                     
                     // Date section
                     Column {
                         Text(
-                            text = "PUBLISHED DATE",
+                            text = stringResource(R.string.label_published_date),
                             style = MaterialTheme.typography.labelLarge,
-                            color = Color(0xFF666666),
+                            color = TextSecondary,
                             fontWeight = FontWeight.Bold
                         )
-                        val formattedDate = remember(selectedImage.value.dataTaken) {
-                            TextUtils.formatDate(selectedImage.value.dataTaken)
+                        val formattedDate = remember(selectedImage.dataTaken) {
+                            TextUtils.formatDate(selectedImage.dataTaken)
                         }
                         Text(
                             text = formattedDate,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
+                            color = TextPrimary
                         )
                     }
                     
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_medium)))
                 }
             } else {
                 Box(
@@ -269,7 +248,7 @@ fun DetailedScreen(imageViewModel: ImageViewModel) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No image selected",
+                        text = stringResource(R.string.no_image_selected),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

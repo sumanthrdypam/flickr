@@ -37,13 +37,16 @@ object TextUtils {
         }
     }
 
-    fun parseImageDimensions(description: String): Pair<String, String> {
-        val widthRegex = "width=\"(\\d+)\"".toRegex()
-        val heightRegex = "height=\"(\\d+)\"".toRegex()
-
-        val width = widthRegex.find(description)?.groupValues?.get(1) ?: "Unknown"
-        val height = heightRegex.find(description)?.groupValues?.get(1) ?: "Unknown"
-
+    fun parseImageDimensions(description: String): Pair<Int, Int> {
+        val widthPattern = "width=\"(\\d+)\""
+        val heightPattern = "height=\"(\\d+)\""
+        
+        val widthMatch = widthPattern.toRegex().find(description)
+        val heightMatch = heightPattern.toRegex().find(description)
+        
+        val width = widthMatch?.groupValues?.get(1)?.toIntOrNull() ?: 0
+        val height = heightMatch?.groupValues?.get(1)?.toIntOrNull() ?: 0
+        
         return Pair(width, height)
     }
 } 

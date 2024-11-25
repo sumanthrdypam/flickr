@@ -26,20 +26,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.sam.flickr.R
 import com.sam.flickr.domain.data.Image
+import com.sam.flickr.presentation.theme.GradientEnd
+import com.sam.flickr.presentation.theme.GradientStart
+import com.sam.flickr.presentation.theme.TextSecondary
+import com.sam.flickr.presentation.theme.White
 
 @Composable
 fun ImageCard(
@@ -55,8 +59,10 @@ fun ImageCard(
             .fillMaxWidth()
             .aspectRatio(1f)
             .clickable(onClick = onImageClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = dimensionResource(R.dimen.card_elevation)
+        ),
+        shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             DisposableEffect(image.link) {
@@ -101,9 +107,9 @@ fun ImageCard(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = Color(0xFF666666),
-                    strokeWidth = 2.dp
+                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size)),
+                    color = TextSecondary,
+                    strokeWidth = dimensionResource(R.dimen.loading_indicator_stroke)
                 )
             }
 
@@ -113,19 +119,19 @@ fun ImageCard(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.8f)
+                                GradientStart,
+                                GradientEnd
                             ),
                             startY = 0f,
                             endY = 100f
                         )
                     )
                     .align(Alignment.BottomCenter)
-                    .padding(12.dp)
+                    .padding(dimensionResource(R.dimen.spacing_medium))
             ) {
                 Text(
                     text = image.title,
-                    color = Color.White,
+                    color = White,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Medium
                     ),

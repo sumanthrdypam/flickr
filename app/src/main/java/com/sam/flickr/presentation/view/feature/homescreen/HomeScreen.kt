@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
+import com.sam.flickr.presentation.theme.BackgroundColor
 import com.sam.flickr.presentation.viewmodel.ImageViewModel
 
 @Composable
@@ -25,7 +26,7 @@ fun HomeScreen(
 
         Box(
             modifier = Modifier
-                .background(Color(Constants.BACKGROUND_COLOR))
+                .background(BackgroundColor)
                 .constrainAs(searchBar) {
                     top.linkTo(parent.top)
                     bottom.linkTo(guideLineFromTop)

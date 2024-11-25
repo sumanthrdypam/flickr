@@ -18,16 +18,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.sam.flickr.R
 import com.sam.flickr.domain.data.Image
 import com.sam.flickr.domain.data.ImageFetchState
+import com.sam.flickr.presentation.theme.TextSecondary
 import com.sam.flickr.presentation.viewmodel.ImageViewModel
 
 private const val GRID_SPACING = 16
@@ -50,13 +51,13 @@ fun ImageGrid(
             is ImageFetchState.Idle -> IdleState()
             is ImageFetchState.Loading -> LoadingState()
             is ImageFetchState.Success -> {
-                    ImagesGrid(
-                        images = result.images,
-                        onImageClick = { image ->
-                            imageViewModel.updateSelectedImage(image)
-                            navController.navigate("detailedScreen")
-                        }
-                    )
+                ImagesGrid(
+                    images = result.images,
+                    onImageClick = { image ->
+                        imageViewModel.updateSelectedImage(image)
+                        navController.navigate("detailedScreen")
+                    }
+                )
             }
             is ImageFetchState.Error -> ErrorState(message = result.message)
         }
@@ -66,31 +67,31 @@ fun ImageGrid(
 @Composable
 private fun LoadingState() {
     CircularProgressIndicator(
-        color = Color(0xFF666666),
-        modifier = Modifier.size(LOADING_INDICATOR_SIZE.dp)
+        color = TextSecondary,
+        modifier = Modifier.size(dimensionResource(R.dimen.loading_indicator_size)),
+        strokeWidth = dimensionResource(R.dimen.loading_indicator_stroke)
     )
 }
-
 
 @Composable
 private fun ErrorState(message: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(dimensionResource(R.dimen.spacing_medium)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Oops!",
+            text = stringResource(R.string.error_title),
             style = MaterialTheme.typography.titleMedium,
-            color = Color(0xFF666666),
-            modifier = Modifier.padding(bottom = 8.dp)
+            color = TextSecondary,
+            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.spacing_small))
         )
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF666666),
+            color = TextSecondary,
             textAlign = TextAlign.Center
         )
     }
@@ -102,19 +103,19 @@ private fun ImagesGrid(
     onImageClick: (Image) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(GRID_COLUMNS),
+        columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(
-            start = GRID_SPACING.dp,
-            end = GRID_SPACING.dp,
-            top = 4.dp,
-            bottom = GRID_BOTTOM_PADDING.dp
+            start = dimensionResource(R.dimen.grid_spacing),
+            end = dimensionResource(R.dimen.grid_spacing),
+            top = dimensionResource(R.dimen.spacing_small),
+            bottom = dimensionResource(R.dimen.grid_bottom_padding)
         ),
-        horizontalArrangement = Arrangement.spacedBy(GRID_SPACING.dp),
-        verticalArrangement = Arrangement.spacedBy(GRID_SPACING.dp),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.grid_spacing)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.grid_spacing)),
         state = rememberLazyGridState(),
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 16.dp)
+            .padding(bottom = dimensionResource(R.dimen.spacing_medium))
     ) {
         items(
             items = images,
@@ -133,20 +134,20 @@ private fun IdleState() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(dimensionResource(R.dimen.spacing_medium)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Start Searching",
+            text = stringResource(R.string.idle_title),
             style = MaterialTheme.typography.titleMedium,
-            color = Color(0xFF666666)
+            color = TextSecondary
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacing_small)))
         Text(
-            text = "Enter keywords to find images",
+            text = stringResource(R.string.idle_message),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF666666),
+            color = TextSecondary,
             textAlign = TextAlign.Center
         )
     }

@@ -13,7 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -21,7 +24,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sam.flickr.presentation.theme.TextPrimary
+import com.sam.flickr.presentation.theme.TextSecondary
+import com.sam.flickr.presentation.theme.Transparent
+import com.sam.flickr.presentation.theme.White
 import com.sam.flickr.presentation.viewmodel.ImageViewModel
+import com.sam.flickr.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,11 +39,12 @@ fun SearchBar(
 ) {
     val focusManager = LocalFocusManager.current
     val searchQuery by imageViewModel.searchQuery.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Box(
         modifier = modifier.padding(
-            horizontal = Constants.GRID_SPACING.dp,
-            vertical = 8.dp
+            horizontal = dimensionResource(R.dimen.grid_spacing),
+            vertical = dimensionResource(R.dimen.spacing_small)
         )
     ) {
         SearchTextField(
@@ -64,55 +73,53 @@ private fun SearchTextField(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = Color.White,
-                shape = RoundedCornerShape(Constants.CORNER_RADIUS.dp)
+                color = White,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
             ),
         textStyle = TextStyle(
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
-            color = Color.Black,
+            color = TextPrimary,
             letterSpacing = 0.15.sp
         ),
         placeholder = {
             Text(
-                "Search...",
-                color = Color(Constants.GRAY_COLOR),
+                text = stringResource(R.string.search_hint),
+                color = TextSecondary,
                 fontSize = 16.sp
             )
         },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                tint = Color(Constants.GRAY_COLOR),
-                modifier = Modifier.size(Constants.ICON_SIZE.dp)
+                contentDescription = stringResource(R.string.search_icon),
+                tint = TextSecondary,
+                modifier = Modifier.size(dimensionResource(R.dimen.icon_size))
             )
         },
         trailingIcon = {
             if (query.isNotEmpty()) {
-                IconButton(
-                    onClick = onClearClick
-                ) {
+                IconButton(onClick = onClearClick) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear search",
-                        tint = Color(Constants.GRAY_COLOR),
-                        modifier = Modifier.size(Constants.ICON_SIZE.dp)
+                        contentDescription = stringResource(R.string.search_clear),
+                        tint = TextSecondary,
+                        modifier = Modifier.size(dimensionResource(R.dimen.icon_size))
                     )
                 }
             }
         },
         singleLine = true,
-        shape = RoundedCornerShape(Constants.CORNER_RADIUS.dp),
+        shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
         colors = TextFieldDefaults.colors(
-            focusedTextColor = Color.Black,
-            unfocusedTextColor = Color.Black,
-            cursorColor = Color(Constants.GRAY_COLOR),
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
+            focusedTextColor = TextPrimary,
+            unfocusedTextColor = TextPrimary,
+            cursorColor = TextSecondary,
+            focusedContainerColor = White,
+            unfocusedContainerColor = White,
+            focusedIndicatorColor = Transparent,
+            unfocusedIndicatorColor = Transparent,
+            disabledIndicatorColor = Transparent
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
