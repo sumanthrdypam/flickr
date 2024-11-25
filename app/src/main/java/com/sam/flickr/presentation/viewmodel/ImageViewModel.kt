@@ -7,10 +7,13 @@ import com.sam.flickr.domain.data.Image
 import com.sam.flickr.domain.data.ImageFetchState
 import com.sam.flickr.domain.usecase.imagefetchusecase.IGetImageFetchStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ImageViewModel @Inject constructor(
     private val imageFetchStateUseCase: IGetImageFetchStateUseCase
@@ -47,7 +50,9 @@ class ImageViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedImage(image: Image) =  { _selectedImage.value = image }
+    fun updateSelectedImage(image: Image) {
+        _selectedImage.value = image
+    }
 
     override fun onCleared() {
         super.onCleared()

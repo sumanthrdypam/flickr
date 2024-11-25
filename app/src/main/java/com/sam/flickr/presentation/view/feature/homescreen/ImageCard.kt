@@ -80,11 +80,16 @@ fun ImageCard(
                 requestManager
                     .asBitmap()
                     .load(image.link)
-                    .override(200, 200)
+                    .override(Constants.THUMBNAIL_SIZE, Constants.THUMBNAIL_SIZE)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .encodeQuality(80)
+                    .encodeQuality(Constants.THUMBNAIL_QUALITY)
                     .priority(Priority.HIGH)
-                    .thumbnail(0.5f)
+                    .thumbnail(
+                        Glide.with(context)
+                            .asBitmap()
+                            .load(image.link)
+                            .override(Constants.THUMBNAIL_SIZE / 2)
+                    )
                     .skipMemoryCache(false)
                     .into(target)
 

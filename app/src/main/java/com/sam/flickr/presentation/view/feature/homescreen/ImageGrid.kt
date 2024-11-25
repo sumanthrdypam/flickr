@@ -31,11 +31,6 @@ import com.sam.flickr.domain.data.ImageFetchState
 import com.sam.flickr.presentation.theme.TextSecondary
 import com.sam.flickr.presentation.viewmodel.ImageViewModel
 
-private const val GRID_SPACING = 16
-private const val GRID_COLUMNS = 2
-private const val LOADING_INDICATOR_SIZE = 36
-private const val GRID_BOTTOM_PADDING = 80
-
 @Composable
 fun ImageGrid(
     modifier: Modifier = Modifier,

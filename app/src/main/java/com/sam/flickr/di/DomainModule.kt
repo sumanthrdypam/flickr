@@ -1,6 +1,5 @@
 package com.sam.flickr.di
 
-import com.sam.flickr.domain.repository.IImageRepository
 import com.sam.flickr.domain.usecase.imagefetchusecase.GetImageFetchStateUseCase
 import com.sam.flickr.domain.usecase.imagefetchusecase.IGetImageFetchStateUseCase
 import dagger.Binds

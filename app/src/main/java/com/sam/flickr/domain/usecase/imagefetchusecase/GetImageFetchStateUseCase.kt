@@ -1,6 +1,5 @@
 package com.sam.flickr.domain.usecase.imagefetchusecase
 
-import com.sam.flickr.domain.data.ImageFetchState
 import com.sam.flickr.domain.repository.IImageRepository
 import javax.inject.Inject
 
